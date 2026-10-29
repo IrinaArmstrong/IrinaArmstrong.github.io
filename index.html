@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Irina Abdullaeva</title>
+<meta name="description" content="Irina Abdullaeva, AI researcher working on streaming video understanding and multimodal models at the FusionBrain Lab, AIRI.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<style>
+/* Layout: one reading column under a sticky "seek bar" whose chapters are the page sections; each chapter fills as you scroll through it. */
+:root {
+  --bg: #F3F5F6;
+  --surface: #FFFFFF;
+  --fg: #11181C;
+  --muted: #56646D;
+  --line: #D5DDE1;
+  --accent: #2B47D9;
+  --accent-soft: #E3E8FD;
+  --h0: #E4E9EC;
+  --h1: #C5CEF8;
+  --h2: #90A2F0;
+  --h3: #5A6FE6;
+  --h4: #2B47D9;
+  --display: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif;
+  --body: "Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0D1115;
+    --surface: #151B21;
+    --fg: #E8EDF0;
+    --muted: #97A5AF;
+    --line: #27313A;
+    --accent: #8CA0FF;
+    --accent-soft: #1C2342;
+    --h0: #1B232A;
+    --h1: #222C5C;
+    --h2: #36479F;
+    --h3: #5F74E4;
+    --h4: #8CA0FF;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0D1115;
+  --surface: #151B21;
+  --fg: #E8EDF0;
+  --muted: #97A5AF;
+  --line: #27313A;
+  --accent: #8CA0FF;
+  --accent-soft: #1C2342;
+  --h0: #1B232A;
+    --h1: #222C5C;
+    --h2: #36479F;
+    --h3: #5F74E4;
+    --h4: #8CA0FF;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--body);
+  font-size: 17px;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
+}
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  background: var(--bg);
+  z-index: 30;
+}
+a { color: var(--fg); text-decoration-color: var(--accent); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+a:hover { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+h1, h2, h3 { font-family: var(--display); margin: 0; text-wrap: balance; }
+p { margin: 0; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+.wrap {
+  max-width: 1040px;
+  margin-inline: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.mono { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.04em; }
+
+/* Seek bar */
+.seek {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 20;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+}
+.seek ul { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.seek ul::-webkit-scrollbar { display: none; }
+.seek li { flex: 1 0 auto; min-width: 5.6rem; }
+.seek a {
+  display: block;
+  padding: 14px 0 0;
+  text-decoration: none;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+}
+.seek a[aria-current="true"] { color: var(--fg); }
+.seek .track { display: block; height: 4px; margin-top: 10px; background: var(--line); }
+.seek .fill { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: var(--accent); }
+
+/* Hero */
+.hero { padding-block: 64px 48px; }
+.hero .role { color: var(--muted); margin-bottom: 18px; text-transform: uppercase; }
+.hero h1 {
+  font-size: clamp(2.7rem, 8.5vw, 5.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  font-weight: 700;
+}
+.hero .bio { margin-top: 28px; max-width: 62ch; display: grid; gap: 14px; font-size: 1.08rem; }
+.links { margin-top: 28px; display: flex; flex-wrap: wrap; gap: 10px 22px; font-family: var(--mono); font-size: 0.85rem; }
+/* GitHub activity heatmap */
+.gh { margin-top: 44px; max-width: 760px; }
+.gh-head { display: flex; justify-content: space-between; gap: 4px 16px; flex-wrap: wrap; color: var(--muted); margin-bottom: 10px; }
+.gh-scroll { overflow-x: auto; padding-bottom: 6px; }
+.gh-grid { display: grid; grid-auto-flow: column; grid-template-rows: repeat(7, 11px); grid-auto-columns: 11px; gap: 3px; width: max-content; }
+.gh-grid i, .gh-legend i { display: block; width: 11px; height: 11px; border-radius: 2px; background: var(--h0); }
+.gh-grid i.pad { background: transparent; }
+.gh-grid.off i { opacity: 0.6; }
+i[data-l="1"] { background: var(--h1); }
+i[data-l="2"] { background: var(--h2); }
+i[data-l="3"] { background: var(--h3); }
+i[data-l="4"] { background: var(--h4); }
+.gh-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 20px; color: var(--muted); margin-top: 10px; }
+.gh-foot a { color: var(--fg); }
+.gh-legend { display: inline-flex; align-items: center; gap: 4px; }
+
+/* Sections */
+.sec { border-top: 1px solid var(--line); padding-block: 48px; scroll-margin-top: 56px; }
+.sec .grid { display: grid; grid-template-columns: 11rem minmax(0, 1fr); gap: 20px 40px; }
+.sec h2 { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; }
+.sec .body { min-width: 0; }
+@media (max-width: 760px) { .sec .grid { grid-template-columns: minmax(0, 1fr); } }
+
+.row { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 4px 24px; padding-block: 12px; border-bottom: 1px solid var(--line); }
+.row:last-child { border-bottom: 0; }
+.row .when { color: var(--muted); padding-top: 4px; }
+@media (max-width: 560px) { .row { grid-template-columns: minmax(0, 1fr); } .row .when { padding-top: 0; } }
+
+/* Research */
+.themes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px 40px; }
+.themes > div { border-top: 2px solid var(--fg); padding-top: 12px; }
+.themes h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+.themes p { color: var(--muted); font-size: 0.98rem; }
+.themes p b { color: var(--fg); font-weight: 600; }
+@media (max-width: 760px) { .themes { grid-template-columns: minmax(0, 1fr); } }
+.toolbox { margin-top: 32px; color: var(--muted); }
+.toolbox b { color: var(--fg); font-weight: 500; }
+
+/* Publications */
+.pubs h3.group { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 500; color: var(--muted); margin: 0 0 6px; }
+.pubs h3.group:not(:first-child) { margin-top: 36px; }
+.pub { display: grid; grid-template-columns: 8.5rem minmax(0, 1fr); gap: 4px 24px; padding-block: 14px; border-bottom: 1px solid var(--line); }
+.pub:last-child { border-bottom: 0; }
+.pub .venue { color: var(--accent); font-weight: 500; padding-top: 3px; }
+.pub .t { font-family: var(--display); font-weight: 600; font-size: 1.08rem; line-height: 1.3; }
+.pub .au { color: var(--muted); font-size: 0.92rem; margin-top: 4px; }
+.pub .au b { color: var(--fg); font-weight: 600; }
+.pub .note { font-size: 0.95rem; margin-top: 6px; }
+.pub .lk { display: flex; flex-wrap: wrap; gap: 4px 16px; margin-top: 8px; font-family: var(--mono); font-size: 0.8rem; }
+@media (max-width: 560px) { .pub { grid-template-columns: minmax(0, 1fr); } .pub .venue { padding-top: 0; } }
+
+/* Experience and education */
+.job .role { font-family: var(--display); font-weight: 600; font-size: 1.1rem; line-height: 1.3; }
+.job .org { color: var(--muted); font-size: 0.95rem; }
+.job ul { margin-top: 10px; display: grid; gap: 7px; font-size: 0.98rem; }
+.job li { padding-left: 1.1rem; position: relative; }
+.job li::before { content: ""; position: absolute; left: 0; top: 0.7em; width: 0.5rem; height: 2px; background: var(--accent); }
+.subhead { font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin: 40px 0 4px; font-weight: 500; }
+.subhead:first-child { margin-top: 0; }
+
+.plain { display: grid; gap: 10px; }
+.plain li { padding-left: 1.1rem; position: relative; }
+.plain li::before { content: ""; position: absolute; left: 0; top: 0.7em; width: 0.5rem; height: 2px; background: var(--accent); }
+
+/* Contact */
+.contact p { max-width: 56ch; }
+.mail { margin-top: 18px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.mail code { font-family: var(--mono); font-size: 0.95rem; background: var(--surface); border: 1px solid var(--line); padding: 7px 12px; user-select: all; overflow-wrap: anywhere; }
+.mail button {
+  font-family: var(--mono); font-size: 0.8rem; letter-spacing: 0.04em;
+  background: var(--fg); color: var(--bg); border: 0; padding: 9px 14px; cursor: pointer;
+}
+.mail button:hover { background: var(--accent); color: var(--surface); }
+footer { border-top: 1px solid var(--line); padding-block: 28px 48px; color: var(--muted); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 24px; }
+</style>
+</head>
+<body>
+<header class="seek">
+  <nav class="wrap" aria-label="Sections">
+    <ul>
+      <li><a href="#about"><span>About</span><span class="track"><span class="fill"></span></span></a></li>
+      <li><a href="#news"><span>News</span><span class="track"><span class="fill"></span></span></a></li>
+      <li><a href="#research"><span>Research</span><span class="track"><span class="fill"></span></span></a></li>
+      <li><a href="#publications"><span>Publications</span><span class="track"><span class="fill"></span></span></a></li>
+      <li><a href="#experience"><span>Experience</span><span class="track"><span class="fill"></span></span></a></li>
+      <li><a href="#teaching"><span>Teaching</span><span class="track"><span class="fill"></span></span></a></li>
+      <li><a href="#contact"><span>Contact</span><span class="track"><span class="fill"></span></span></a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section id="about" class="hero wrap" data-chapter>
+    <p class="role mono">AI researcher · FusionBrain Lab, AIRI · Innopolis University</p>
+    <h1>Irina Abdullaeva</h1>
+    <div class="bio">
+      <p>I work on multimodal models that watch video. At the FusionBrain Lab I lead a project on streaming video understanding: Video-LLMs that read a video as it arrives and decide when to respond.</p>
+      <p>I train and evaluate vision-language and omni-modal models, and build the benchmarks and training infrastructure around them. The thread through my work, and through my doctoral research, is long and continuous data: long videos, event sequences and streams.</p>
+      <p>Before research I spent several years building production NLP and document-understanding systems at Sber. I am now moving toward robot learning, with a focus on vision-language-action models and world models.</p>
+    </div>
+    <div class="links">
+      <a href="https://scholar.google.com/citations?user=EU_9Xf0AAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a>
+      <a href="https://github.com/IrinaArmstrong" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/irina-abdullaeva-63b437311/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="#contact">Email</a>
+    </div>
+    <div class="gh">
+      <div class="gh-head mono"><span>GitHub activity · last 12 months</span><span id="gh-total"></span></div>
+      <div class="gh-scroll" id="gh-scroll"><div class="gh-grid off" id="gh-grid" role="img" aria-label="GitHub contribution graph for the last 12 months"></div></div>
+      <div class="gh-foot mono">
+        <span><a href="https://github.com/IrinaArmstrong" target="_blank" rel="noopener">@IrinaArmstrong</a> <span id="gh-note"></span></span>
+        <span class="gh-legend" aria-hidden="true">Less <i data-l="0"></i><i data-l="1"></i><i data-l="2"></i><i data-l="3"></i><i data-l="4"></i> More</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="news" class="sec" data-chapter>
+    <div class="wrap grid">
+      <h2>News</h2>
+      <div class="body">
+        <div class="row"><span class="when mono">2026</span><p>ESQA: Event Sequences Question Answering is published in IEEE Access, volume 14.</p></div>
+        <div class="row"><span class="when mono">Jan 2026</span><p>Presented NoReGeo at AAAI-26 in Singapore. The preprint is on arXiv.</p></div>
+        <div class="row"><span class="when mono">Dec 2025</span><p>MindShift, on how language models react to psychological prompts, is on arXiv.</p></div>
+        <div class="row"><span class="when mono">Jul 2025</span><p>Joined the Laboratory of Multimodal Research in Industry at Innopolis University as Senior Applied Mathematician, part time.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="research" class="sec" data-chapter>
+    <div class="wrap grid">
+      <h2>Research</h2>
+      <div class="body">
+        <div class="themes">
+          <div>
+            <h3>Streaming video understanding</h3>
+            <p>Video-LLMs that process a stream causally and choose when to answer. I lead this project with a team of five or more. We built a unified evaluation framework for offline and streaming Video-LLMs, covering omni-modal and proactive-response settings. <b>SPECTRA</b> scores capability, timing and resource use.</p>
+          </div>
+          <div>
+            <h3>Efficient long-video input</h3>
+            <p><b>MaxInfo</b> selects key frames without training, using the maximum volume principle, and adds 3.28% on LongVideoBench with LLaVA-Video-7B. <b>DiffSelect</b> makes selection differentiable and query-agnostic, with Gumbel-Softmax masking and a reconstruction objective.</p>
+          </div>
+          <div>
+            <h3>Building multimodal models</h3>
+            <p><b>OmniFusion</b> joins a pretrained LLM to visual encoders through adapters, trained in stages. <b>ESQA</b> connects an event-sequence encoder to a frozen LLM with a learned connector and LoRA. I also work with MiniCPM-o and Qwen-VL / Qwen3-VL.</p>
+          </div>
+          <div>
+            <h3>Grounding and interpretability</h3>
+            <p><b>LatentMask</b> supervises latent location tokens during training to ground what a VLM sees, then discards them at inference. I also study how vision-LLMs perceive visual data.</p>
+          </div>
+          <div>
+            <h3>Benchmarks</h3>
+            <p><b>NoReGeo</b> has 2,500 school-level geometry problems in 25 categories, built to test geometric understanding without reasoning. The best proprietary model reaches about 65%, below the 74.5% humans score on the same multiple-choice tasks. <b>OmniDialog</b> and <b>MindShift</b> cover generalization across modalities and model reactions to psychological prompts.</p>
+          </div>
+          <div>
+            <h3>Long sequences</h3>
+            <p>The subject of my doctoral research: methods for handling long data sequences in multimodal deep learning models, from event sequences and sensor signals to long videos.</p>
+          </div>
+        </div>
+        <p class="toolbox mono"><b>Toolbox</b> · PyTorch · PyTorch Lightning · DeepSpeed ZeRO · Horovod · WebDataset · lmms-eval · LoRA · GRPO · Python, with some C/C++</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="publications" class="sec" data-chapter>
+    <div class="wrap grid">
+      <h2>Publications</h2>
+      <div class="body pubs">
+        <h3 class="group">Published</h3>
+
+        <article class="pub">
+          <span class="venue mono">AAAI 2026</span>
+          <div>
+            <p class="t">NoReGeo: Non-Reasoning Geometry Benchmark</p>
+            <p class="au"><b>I. Abdullaeva</b>, A. Vasiliuk, E. Goncharova, T. Rahmatullaev, I. Zagorulko, M. Kurkin, A. Kuznetsov</p>
+            <p class="lk"><a href="https://doi.org/10.1609/aaai.v40i23.38960" target="_blank" rel="noopener">Paper</a><a href="https://arxiv.org/abs/2601.10254" target="_blank" rel="noopener">arXiv</a><a href="https://github.com/FusionBrainLab/NoReGeo" target="_blank" rel="noopener">Code</a></p>
+          </div>
+        </article>
+
+        <article class="pub">
+          <span class="venue mono">WACV 2026</span>
+          <div>
+            <p class="t">MaxInfo: A Training-Free Key-Frame Selection Method Using Maximum Volume for Enhanced Video Understanding</p>
+            <p class="au">P. Li, <b>I. Abdullaeva</b>, A. Gambashidze, A. Kuznetsov, I. Oseledets</p>
+            <p class="lk"><a href="https://arxiv.org/abs/2502.03183" target="_blank" rel="noopener">arXiv</a></p>
+          </div>
+        </article>
+
+        <article class="pub">
+          <span class="venue mono">IEEE Access 2026</span>
+          <div>
+            <p class="t">ESQA: Event Sequences Question Answering</p>
+            <p class="au"><b>I. Abdullaeva</b>, A. Filatov, M. Orlov, I. Karpukhin, V. Vasilev, D. Dimitrov, A. Kuznetsov, I. Kireev, et al.</p>
+            <p class="au">Vol. 14, pp. 59390–59408</p>
+            <p class="lk"><a href="https://arxiv.org/abs/2407.12833" target="_blank" rel="noopener">arXiv</a></p>
+          </div>
+        </article>
+
+        <article class="pub">
+          <span class="venue mono">GenBench 2024</span>
+          <div>
+            <p class="t">OmniDialog: A Multimodal Benchmark for Generalization Across Text, Visual, and Audio Modalities</p>
+            <p class="au">A. Razzhigaev, M. Kurkin, E. Goncharova, <b>I. Abdullaeva</b>, A. Lysenko, A. Panchenko, A. Kuznetsov, D. Dimitrov</p>
+            <p class="au">Workshop on Generalisation and Benchmarking in NLP</p>
+          </div>
+        </article>
+
+        <h3 class="group">Preprints</h3>
+
+        <article class="pub">
+          <span class="venue mono">arXiv 2025</span>
+          <div>
+            <p class="t">MindShift: Analyzing Language Models' Reactions to Psychological Prompts</p>
+            <p class="au">A. Vasiliuk, <b>I. Abdullaeva</b>, P. Druzhinina, A. Razzhigaev, A. Kuznetsov</p>
+            <p class="lk"><a href="https://arxiv.org/abs/2512.09149" target="_blank" rel="noopener">arXiv</a></p>
+          </div>
+        </article>
+
+        <article class="pub">
+          <span class="venue mono">arXiv 2024</span>
+          <div>
+            <p class="t">OmniFusion Technical Report</p>
+            <p class="au">E. Goncharova, A. Razzhigaev, M. Mikhalchuk, M. Kurkin, <b>I. Abdullaeva</b>, M. Skripkin, I. Oseledets, D. Dimitrov, A. Kuznetsov</p>
+            <p class="note">An open multimodal LLM built from a pretrained LLM, visual encoders and adapters.</p>
+            <p class="lk"><a href="https://arxiv.org/abs/2404.06212" target="_blank" rel="noopener">arXiv</a></p>
+          </div>
+        </article>
+
+        <h3 class="group">Under review and in preparation</h3>
+
+        <article class="pub">
+          <span class="venue mono">AAAI 2027, under review</span>
+          <div>
+            <p class="t">LatentMask: Latent Visual Grounding in VLMs via Supervised Latent Location Tokens</p>
+            <p class="au">M. Skripkin, E. Goncharova, <b>I. Abdullaeva</b>, I. Oseledets, A. Kuznetsov</p>
+          </div>
+        </article>
+
+        <article class="pub">
+          <span class="venue mono">In preparation</span>
+          <div>
+            <p class="t">SPECTRA: Streaming Performance Evaluation across Capability, Timing and Resource Axes</p>
+            <p class="au"><b>I. Abdullaeva</b>, A. Kuznetsov</p>
+          </div>
+        </article>
+
+        <article class="pub">
+          <span class="venue mono">In preparation</span>
+          <div>
+            <p class="t">DiffSelect: Differentiable, Query-Agnostic Frame Selection for Video-LLMs</p>
+            <p class="au"><b>I. Abdullaeva</b></p>
+          </div>
+        </article>
+
+        <p class="toolbox mono">Full list and citation counts on <a href="https://scholar.google.com/citations?user=EU_9Xf0AAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="experience" class="sec" data-chapter>
+    <div class="wrap grid">
+      <h2>Experience and education</h2>
+      <div class="body">
+        <h3 class="subhead">Research</h3>
+
+        <article class="row job">
+          <span class="when mono">Jul 2025 – now</span>
+          <div>
+            <p class="role">Senior Applied Mathematician, part time</p>
+            <p class="org">Laboratory of Multimodal Research in Industry, Innopolis University</p>
+            <ul>
+              <li>Lead research projects that apply multimodal models to industrial problems.</li>
+              <li>Develop mathematical approaches for combining text, image, video and other data modalities.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="row job">
+          <span class="when mono">Feb 2023 – now</span>
+          <div>
+            <p class="role">AI Researcher</p>
+            <p class="org">FusionBrain Lab, Artificial Intelligence Research Institute (AIRI)</p>
+            <ul>
+              <li>Lead the Streaming Video Understanding project and a team of five or more researchers and engineers.</li>
+              <li>Designed and built from scratch a unified evaluation framework for offline and streaming Video-LLMs, and co-authored SPECTRA.</li>
+              <li>Co-authored MaxInfo and developed DiffSelect for frame selection in Video-LLMs.</li>
+              <li>Co-developed OmniFusion and built ESQA, covering data preparation, staged training and LoRA fine-tuning.</li>
+              <li>Adapted BEVFusion, which fuses camera and point-cloud data, to a partner's autonomous-driving data.</li>
+              <li>Built video-language data pipelines: WebDataset shards on S3, distributed loading, DeepSpeed ZeRO-2 configuration, and large video collections such as Ego4D, ActivityNet, LLaVA-Video-178K and Tarsier2-Recap-585K.</li>
+              <li>Advised two master's students. Organizer of the Strong Intelligence competition at AI Journey 2023 and 2024.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="row job">
+          <span class="when mono">Jun – Dec 2020</span>
+          <div>
+            <p class="role">AI Research Engineer</p>
+            <p class="org">Moscow Institute of Physics and Technology (MIPT)</p>
+            <ul>
+              <li>Research on dynamic biometric identification from human reflex reactions, using sensor signals.</li>
+            </ul>
+          </div>
+        </article>
+
+        <h3 class="subhead">Industry</h3>
+
+        <article class="row job">
+          <span class="when mono">Mar 2022 – Jan 2023</span>
+          <div>
+            <p class="role">Lead Data Scientist, Intelligent Document Processing</p>
+            <p class="org">Sber</p>
+            <ul>
+              <li>Designed a multimodal document-understanding solution.</li>
+              <li>Cut inference cost for production with distillation, quantisation, pruning and ONNX conversion.</li>
+              <li>Built AutoNER, a library for automated NLP pipelines: classification, sequence tagging and NER.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="row job">
+          <span class="when mono">Dec 2019 – Feb 2022</span>
+          <div>
+            <p class="role">Lead Data Scientist, Monitoring and Reliability</p>
+            <p class="org">Sber</p>
+            <ul>
+              <li>Developed, deployed and supported NLP models end to end: classification, clustering, NER and keyword extraction.</li>
+              <li>Led projects independently and worked directly with business stakeholders.</li>
+            </ul>
+          </div>
+        </article>
+
+        <h3 class="subhead">Education</h3>
+
+        <article class="row job">
+          <span class="when mono">2021 –</span>
+          <div>
+            <p class="role">Doctoral studies, Artificial Intelligence and Machine Learning</p>
+            <p class="org">Moscow Institute of Physics and Technology (MIPT)</p>
+            <ul>
+              <li>Thesis direction: Methods for Handling Long Data Sequences in Multimodal Deep Learning Models.</li>
+            </ul>
+          </div>
+        </article>
+
+        <article class="row job">
+          <span class="when mono">2019 – 2021</span>
+          <div>
+            <p class="role">MSc, Computer Science: Artificial Intelligence and Control Systems</p>
+            <p class="org">Bauman Moscow State Technical University, with honours</p>
+          </div>
+        </article>
+
+        <article class="row job">
+          <span class="when mono">2015 – 2019</span>
+          <div>
+            <p class="role">BSc, Computer Science: Artificial Intelligence and Control Systems</p>
+            <p class="org">Bauman Moscow State Technical University, with honours</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="teaching" class="sec" data-chapter>
+    <div class="wrap grid">
+      <h2>Teaching and service</h2>
+      <div class="body">
+        <ul class="plain">
+          <li>Lecturer and teaching assistant at Skoltech and Bauman Moscow State Technical University, in different years. Courses: Methods of Modern GenAI and Classical Machine Learning.</li>
+          <li>Reviewer for IEEE Access.</li>
+          <li>Talks at AAAI 2026, ICLR 2026 and WACV 2026, and at scientific seminars.</li>
+          <li>Organizer of the Strong Intelligence competition at AI Journey 2023 and 2024.</li>
+          <li>Two registered software copyrights.</li>
+          <li>Languages: Russian (native), English (C1–C2), German (A1–A2).</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="sec" data-chapter>
+    <div class="wrap grid">
+      <h2>Contact</h2>
+      <div class="body contact">
+        <p>I am glad to hear about collaborations on streaming and omni-modal video models, benchmarks, and the move toward vision-language-action models.</p>
+        <div class="mail">
+          <code id="mail-addr">ariadna.efon.ae@gmail.com</code>
+          <button type="button" id="copy-mail">Copy address</button>
+          <span id="copy-note" class="mono" role="status"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap mono">
+  <span>© 2026 Irina Abdullaeva</span>
+  <span>Last updated October 2026</span>
+</footer>
+
+<script>
+(function () {
+  var secs = Array.prototype.slice.call(document.querySelectorAll("[data-chapter]"));
+  var links = Array.prototype.slice.call(document.querySelectorAll(".seek a"));
+  var bar = document.querySelector(".seek");
+  var ticking = false;
+
+  function clamp(v) { return Math.max(0, Math.min(1, v)); }
+
+  function update() {
+    ticking = false;
+    var h = bar ? bar.offsetHeight : 48;
+    var atEnd = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+    var current = 0;
+    secs.forEach(function (s, i) {
+      var r = s.getBoundingClientRect();
+      var p = clamp((h + 8 - r.top) / Math.max(1, r.height - Math.max(0, window.innerHeight - h) * 0.5));
+      if (atEnd && i === secs.length - 1) p = 1;
+      if (r.top <= h + 40) current = i;
+      var fill = links[i] && links[i].querySelector(".fill");
+      if (fill) fill.style.setProperty("--p", p.toFixed(3));
+    });
+    links.forEach(function (a, i) {
+      if (i === current) a.setAttribute("aria-current", "true"); else a.removeAttribute("aria-current");
+    });
+    var active = links[current];
+    var list = active && active.closest("ul");
+    if (list && active) {
+      var left = active.parentElement.offsetLeft - 16;
+      if (active.parentElement.offsetLeft < list.scrollLeft || active.parentElement.offsetLeft + active.parentElement.offsetWidth > list.scrollLeft + list.clientWidth) {
+        list.scrollLeft = left;
+      }
+    }
+  }
+
+  function onScroll() {
+    if (!ticking) { ticking = true; window.requestAnimationFrame(update); }
+  }
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  update();
+
+  var btn = document.getElementById("copy-mail");
+  var note = document.getElementById("copy-note");
+  var addr = document.getElementById("mail-addr");
+  if (btn && addr) {
+    btn.addEventListener("click", function () {
+      var done = function () { if (note) note.textContent = "Copied"; };
+      var fail = function () {
+        try {
+          var range = document.createRange();
+          range.selectNodeContents(addr);
+          var sel = window.getSelection();
+          sel.removeAllRanges();
+          sel.addRange(range);
+          if (note) note.textContent = "Press copy to finish";
+        } catch (e) {}
+      };
+      try {
+        navigator.clipboard.writeText(addr.textContent.trim()).then(done, fail);
+      } catch (e) { fail(); }
+    });
+  }
+})();
+</script>
+<script>
+/* GitHub heatmap: draws an empty grid at once, then fills it with live data when the page is online. */
+(function () {
+  var USER = "IrinaArmstrong";
+  var grid = document.getElementById("gh-grid");
+  if (!grid) return;
+  var scroller = document.getElementById("gh-scroll");
+  var totalEl = document.getElementById("gh-total");
+  var noteEl = document.getElementById("gh-note");
+
+  function cell(level, title, pad) {
+    var i = document.createElement("i");
+    if (pad) { i.className = "pad"; } else { i.setAttribute("data-l", String(level)); if (title) i.title = title; }
+    return i;
+  }
+  function toEnd() { if (scroller) scroller.scrollLeft = scroller.scrollWidth; }
+
+  function skeleton() {
+    var end = new Date();
+    var start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - 363);
+    var frag = document.createDocumentFragment();
+    for (var p = 0; p < start.getDay(); p++) frag.appendChild(cell(0, "", true));
+    for (var d = 0; d < 364; d++) frag.appendChild(cell(0, ""));
+    grid.innerHTML = "";
+    grid.appendChild(frag);
+    grid.classList.add("off");
+    toEnd();
+  }
+
+  function draw(list) {
+    var first = new Date(list[0].date + "T00:00:00");
+    var frag = document.createDocumentFragment();
+    var sum = 0;
+    for (var p = 0; p < first.getDay(); p++) frag.appendChild(cell(0, "", true));
+    list.forEach(function (c) {
+      sum += c.count;
+      frag.appendChild(cell(c.level, c.count + (c.count === 1 ? " contribution on " : " contributions on ") + c.date));
+    });
+    grid.innerHTML = "";
+    grid.appendChild(frag);
+    grid.classList.remove("off");
+    var text = sum.toLocaleString("en-US") + " contributions";
+    if (totalEl) totalEl.textContent = text;
+    grid.setAttribute("aria-label", "GitHub contribution graph: " + text + " in the last 12 months");
+    if (noteEl) noteEl.textContent = "· live";
+    toEnd();
+  }
+
+  skeleton();
+
+  var ctl = typeof AbortController === "function" ? new AbortController() : null;
+  var timer = setTimeout(function () { if (ctl) ctl.abort(); }, 8000);
+  fetch("https://github-contributions-api.jogruber.de/v4/" + USER + "?y=last", ctl ? { signal: ctl.signal } : {})
+    .then(function (r) { if (!r.ok) throw new Error("status " + r.status); return r.json(); })
+    .then(function (data) {
+      clearTimeout(timer);
+      if (!data || !data.contributions || !data.contributions.length) throw new Error("empty");
+      draw(data.contributions);
+    })
+    .catch(function () {
+      clearTimeout(timer);
+      if (noteEl) noteEl.textContent = "· graph loads from GitHub when the page is online";
+    });
+})();
+</script>
+</body>
+</html>
